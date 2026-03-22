@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="th">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport"content="width=devic-width,initil-scale=1.0">
+    <title>ระบเช็คชื่ออัจฉริยะ</title>
+    <link rel="stylesheet"href="style.css">
+ </head>
+ <body>
+    <div class="app-container">
+        <h1> ระบบเช็คชื่อ & คะแนน</h1>
+        <div class="status-card">
+            <h2>สวัสดี, <span id="student-name">นักเรียน</span></h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <p>คะแนนความดี</p>
+                    <strong id="points">100</strong>
+                </div>
+                <div class="stat-item">
+                    <p>สิทธิ์เข้าสอบ</p>
+                    <strong id="attendance-percent">100%</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <div class="button-group">
+            <div id="reader" style="width: 100%; max-width: 400px; margin: auto;"></div>
+            <button onclick="handleCheckIn()" class="btn-checkin">สแกนเช็คชื่อ</button>
+            <button onclick="handleLeave()" class="btn-leave">ส่งใบลา</button>
+        </div>
+
+        <div id="message" class="message-box"></div>
+    </div>
+<script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="script.js"></script>
+ </body>
+</html>
