@@ -1,59 +1,66 @@
-let points = 100;
-let presentCount = 0;
-let totalDays = 0;
+let score = 100;
+let totalScore = 200;
 
 function updateUI() {
-    document.getElementById('points').innerText = points;
-    
-    // คำนวณเปอร์เซ็นต์
-    let percen = totalDays === 0 ? 100 : (presentCount / totalDays) * 100;
-    document.getElementById('attendance-percent').innerText = percen.toFixed(1) + "%";
-    
-    // ปรับความยาวแถบพลัง
-    document.getElementById('progress-bar').style.width = percen + "%";
+    // 1. อัปเดตตัวเลขคะแนน
+    document.getElementById("scoretext").innerText = score;
+
+    // 2. คำนวณและอัปเดตเปอร์เซ็นต์
+    let percen = (score / totalScore) * 100;
+    document.getElementById("percentext").innerText = percen.toFixed(1) + "%";
+
+    // 3. อัปเดตแถบความคืบหน้า (Progress Bar)
+    document.getElementById("progress-bar").style.width = percen + "%";
+
+    // 4. เช็คสิทธิ์เข้าสอบ
+    let statusText = document.getElementById("status-text");
+    if (percen >= 80) {
+        statusText.innerText = "✅ มีสิทธิ์เข้าสอบ";
+        statusText.style.color = "#28a745";
+    } else {
+        statusText.innerText = "❌ ไม่มีสิทธิ์เข้าสอบ";
+        statusText.style.color = "#dc3545";
+    }
 }
 
 function handleCheckIn() {
-    totalDays++;
-    presentCount++;
-    points += 5;
-    
-    document.getElementById('message').innerText = "✅ เช็คชื่อสำเร็จ! (+5 คะแนน)";
-    updateUI();
+    if (score < totalScore) {
+        score += 5;
+        if (score > totalScore) score = totalScore;
+        updateUI();
+    }
 }
 
-function handleLeave() {
-    totalDays++;
-    
-    document.getElementById('message').innerText = "📝 บันทึกการลาเรียบร้อย!";
-    updateUI();
-}
-
-// ฟังก์ชันเริ่มสแกน QR Code
 function startScanner() {
     const html5QrCode = new Html5Qrcode("reader");
-    
+
     html5QrCode.start(
-        { facingMode: "environment" }, // ใช้กล้องหลัง (ถ้ามี)
+        { facingMode: "environment" }, 
         {
-            fps: 10,    // สแกน 10 เฟรมต่อวินาที
-            qrbox: 250  // ขนาดกรอบสแกน
+            fps: 10,
+            qrbox: { width: 250, height: 250 }
         },
-        qrCodeMessage => {
-            // ถ้าสแกนเจอข้อความว่า "CHECKIN_SUCCESS" ให้เรียกฟังก์ชันเช็คชื่อ
-            if(qrCodeMessage === "CHECKIN_SUCCESS") {
+        (qrCodeMessage) => {
+            // ดักจับข้อความจาก QR Code
+            if (qrCodeMessage === "CHECKIN_SUCCESS") {
                 handleCheckIn();
-                html5QrCode.stop(); // สแกนเสร็จให้หยุดกล้อง
-                alert("สแกนสำเร็จ!");
+                alert("สแกนสำเร็จ! คะแนนเพิ่มขึ้นแล้วครับ");
+                
+                // หยุดกล้องหลังสแกนเสร็จ
+                html5QrCode.stop().then(() => {
+                    console.log("Scanner stopped.");
+                }).catch(err => console.error(err));
+            } else {
+                alert("QR Code ไม่ถูกต้อง: " + qrCodeMessage);
             }
         },
-        errorMessage => {
-            // ไม่ต้องทำอะไรถ้ายังสแกนไม่เจอ
+        (errorMessage) => {
+            // ไม่ต้องทำอะไร ปล่อยให้มันหาต่อไป
         }
     ).catch(err => {
-        console.error("เปิดกล้องไม่ได้: ", err);
+        alert("เปิดกล้องไม่ได้: " + err);
     });
 }
 
-// เปลี่ยนปุ่มสแกนเดิมให้เป็นปุ่มเปิดกล้อง
-document.querySelector('.btn-checkin').onclick = startScanner;
+// เริ่มต้นหน้าจอ
+updateUI();

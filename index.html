@@ -1,40 +1,30 @@
 <!DOCTYPE html>
 <html lang="th">
- <head>
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport"content="width=devic-width,initil-scale=1.0">
-    <title>ระบเช็คชื่ออัจฉริยะ</title>
-    <link rel="stylesheet"href="style.css">
- </head>
- <body>
-    <div class="app-container">
-        <h1> ระบบเช็คชื่อ & คะแนน</h1>
-        <div class="status-card">
-            <h2>สวัสดี, <span id="student-name">นักเรียน</span></h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <p>คะแนนความดี</p>
-                    <strong id="points">100</strong>
-                </div>
-                <div class="stat-item">
-                    <p>สิทธิ์เข้าสอบ</p>
-                    <strong id="attendance-percent">100%</strong>
-                </div>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเช็คชื่อ QR Code - พัทลุง</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ระบบเช็คชื่อ QR Code</h1>
+        
+        <div class="score-board">
+            <p>คะแนนปัจจุบัน: <span id="scoretext">100</span> / 200</p>
+            <p>เปอร์เซ็นต์: <span id="percentext">50.0%</span></p>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
             </div>
+            <p id="status-text" class="status"></p>
         </div>
 
-        <div class="progress-container">
-            <div id="progress-bar" class="progress-bar"></div>
-        </div>
-        <div class="button-group">
-            <div id="reader" style="width: 100%; max-width: 400px; margin: auto;"></div>
-            <button onclick="handleCheckIn()" class="btn-checkin">สแกนเช็คชื่อ</button>
-            <button onclick="handleLeave()" class="btn-leave">ส่งใบลา</button>
-        </div>
+        <div id="reader" style="width: 100%; max-width: 400px; margin: 20px auto;"></div>
 
-        <div id="message" class="message-box"></div>
+        <button onclick="startScanner()" class="btn-checkin">แสกนเช็คชื่อ</button>
     </div>
-<script src="https://unpkg.com/html5-qrcode"></script>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="script.js"></script>
- </body>
+</body>
 </html>
