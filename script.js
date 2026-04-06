@@ -1,18 +1,22 @@
-let score = 100;
+// 1. ท่อส่งข้อมูลของพี่บ่าว
+const scriptURL = 'https://script.google.com/macros/s/AKfycbwY_rEFst-uno3cj-BPYekv_N2PCNgiH9ee0KuvkZREW0zbZU08yuL4Vtkl6col-JIcKQ/exec';
+
+// 2. ตั้งค่าเริ่มต้น (ดึงจากเครื่องถ้ามี)
+let score = parseInt(localStorage.getItem('userScore')) || 110;
 let totalScore = 200;
 
 function updateUI() {
-    // 1. อัปเดตตัวเลขคะแนน
+    // อัปเดตตัวเลขคะแนน
     document.getElementById("scoretext").innerText = score;
-
-    // 2. คำนวณและอัปเดตเปอร์เซ็นต์
+    
+    // คำนวณเปอร์เซ็นต์
     let percen = (score / totalScore) * 100;
     document.getElementById("percentext").innerText = percen.toFixed(1) + "%";
-
-    // 3. อัปเดตแถบความคืบหน้า (Progress Bar)
+    
+    // อัปเดตแถบ Progress Bar
     document.getElementById("progress-bar").style.width = percen + "%";
-
-    // 4. เช็คสิทธิ์เข้าสอบ
+    
+    // เช็คสิทธิ์เข้าสอบ
     let statusText = document.getElementById("status-text");
     if (percen >= 80) {
         statusText.innerText = "✅ มีสิทธิ์เข้าสอบ";
@@ -21,46 +25,50 @@ function updateUI() {
         statusText.innerText = "❌ ไม่มีสิทธิ์เข้าสอบ";
         statusText.style.color = "#dc3545";
     }
+
+    // เซฟลงเครื่องกันหาย
+    localStorage.setItem('userScore', score);
 }
 
+// 3. ฟังก์ชันส่งข้อมูลเข้า Google Sheets
+function sendToTeacher(name, currentScore) {
+    const data = new FormData();
+    data.append('Name', name);
+    data.append('Points', currentScore);
+
+    fetch(scriptURL, { method: 'POST', body: data})
+      .then(response => console.log('ส่งข้อมูลสำเร็จ!'))
+      .catch(error => console.error('Error!', error.message));
+}
+
+// 4. ฟังก์ชันเมื่อสแกนสำเร็จ
 function handleCheckIn() {
     if (score < totalScore) {
         score += 5;
-        if (score > totalScore) score = totalScore;
+        let name = "ธนวิช อรชร (เวียร์)";
+        
+        // ส่งไปหลังบ้านครู
+        sendToTeacher(name, score);
+        
         updateUI();
+        alert("เช็คชื่อสำเร็จ! ข้อมูลถูกส่งไปที่ระบบครูแล้ว");
     }
 }
 
 function startScanner() {
     const html5QrCode = new Html5Qrcode("reader");
-
     html5QrCode.start(
         { facingMode: "environment" }, 
-        {
-            fps: 10,
-            qrbox: { width: 250, height: 250 }
-        },
+        { fps: 10, qrbox: 250 },
         (qrCodeMessage) => {
-            // ดักจับข้อความจาก QR Code
-            if (qrCodeMessage === "CHECKIN_SUCCESS") {
+            if (qrCodeMessage.trim() === "CHECKIN_SUCCESS") {
                 handleCheckIn();
-                alert("สแกนสำเร็จ! คะแนนเพิ่มขึ้นแล้วครับ");
-                
-                // หยุดกล้องหลังสแกนเสร็จ
-                html5QrCode.stop().then(() => {
-                    console.log("Scanner stopped.");
-                }).catch(err => console.error(err));
-            } else {
-                alert("QR Code ไม่ถูกต้อง: " + qrCodeMessage);
+                html5QrCode.stop(); 
             }
         },
-        (errorMessage) => {
-            // ไม่ต้องทำอะไร ปล่อยให้มันหาต่อไป
-        }
-    ).catch(err => {
-        alert("เปิดกล้องไม่ได้: " + err);
-    });
+        (errorMessage) => { }
+    ).catch(err => console.error(err));
 }
 
-// เริ่มต้นหน้าจอ
+// รันตอนโหลดหน้าเว็บ
 updateUI();
