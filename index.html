@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเช็คชื่อ QR Code - พัทลุง</title>
+    <title>ระบบเช็คชื่อ QR Code - PVC </title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,6 +22,9 @@
         <div id="reader" style="width: 100%; max-width: 400px; margin: 20px auto;"></div>
 
         <button onclick="startScanner()" class="btn-checkin">แสกนเช็คชื่อ</button>
+        <button onclick="handleLeave()" style="background-color: #ff9800; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 10px;">
+    📄 แจ้งลาเรียน
+</button>
     </div>
 
     <script src="https://unpkg.com/html5-qrcode"></script>
